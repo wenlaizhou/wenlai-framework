@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+	<appenders>
+		<RollingRandomAccessFile name="framework" fileName="${sys:log.dir}/framework.log" filePattern="${sys:log.dir}/$${date:yyyy-MM-dd}/framework-%d{yyyy-MM-dd-HH}-%i.log">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="24" modulate="true" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10000" />
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="pool" fileName="${sys:log.dir}/log/pool.log" filePattern="${sys:log.dir}/$${date:yyyy-MM-dd}/pool-%d{yyyy-MM-dd-HH}-%i.log">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="24" modulate="true" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10000" />
+		</RollingRandomAccessFile>
+		<SMTP name="mailer" subject="ERROR LOG" to="zhouwenlai@etcp.cn,wenlai_zhou@126.com" from="monitor@etcp.cn" bufferSize="2" smtpHost="smtp.qiye.126.com" smtpPort="25" smtpUsername="monitor@etcp.cn" smtpPassword="****" smtpDebug="false">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n" />
+		</SMTP>
+		<Async name="async_mailer" includeLocation="true" bufferSize="128">
+			<appender-ref ref="mailer" />
+		</Async>
+		<Async name="framework_async">
+			<AppenderRef ref="framework" />
+		</Async>
+		<Async name="pool_async">
+			<AppenderRef ref="pool" />
+		</Async>
+	</appenders>
+	<loggers>
+		<Root level="all">
+			<appender-ref ref="framework_async" />
+		</Root>
+		<logger name="cn.framework.info" level="all">
+			<appender-ref ref="framework_async" />
+		</logger>
+		<logger name="cn.framework.error" level="all">
+			<appender-ref ref="framework_async" />
+			<appender-ref ref="async_mailer" />
+		</logger>
+		<logger name="pool.framework.info" level="all">
+			<appender-ref ref="pool_async" />
+		</logger>
+	</loggers>
+</configuration>

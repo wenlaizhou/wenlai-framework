@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+	<port value="8888" />
+	<work-path value="work" />
+	<pool-size value="1000" />
+	<queue-size value="1000" />
+	<time-out value="3000" />
+	<address value="localhost" />
+	<thread-pool size="30" />
+	<init>
+		<provider class="cn.framework.core.container.LogInitProvider" />
+		<provider class="cn.framework.core.container.ServerInitProvider" />
+		<provider class="cn.framework.mvc.init.MvcInitProvider" />
+		<provider class="cn.framework.db.init.DbInitProvider" />
+		<provider class="cn.framework.cache.init.CacheInitProvider" />
+		<provider class="cn.framework.search.init.SearchInitProvider">
+			<init-param name="" value="" />
+			<init-param name="" value="" />
+		</provider>
+	</init>
+	<search>
+		<index path="${project.path}index" />
+	</search>
+	<mvc>
+		<controller package="cn.wenlai.hr.controller" />
+		<view package="cn.wenlai.hr.view.hr" prefix="/hr" />
+		<view package="cn.wenlai.hr.view.common" prefix="/common" />
+		<view package="cn.wenlai.hr.view.hr.candidate" prefix="/candidate" />
+		<view package="cn.wenlai.hr.view.hr.company" prefix="/company" />
+		<view package="cn.wenlai.hr.view.hr.follow" prefix="/follow" />
+		<view package="cn.wenlai.hr.view.hr.position" prefix="/position" />
+		<view package="cn.wenlai.hr.view.hr.resume" prefix="/resume" />
+	</mvc>
+	<cache>
+		<connections>
+			<redis id="session">
+				<host>***.***.***.***</host>
+				<port>6379</port>
+				<password>***</password>
+				<db>0</db>
+				<pool>
+					<size>10</size>
+					<ping-second>10</ping-second>
+				</pool>
+			</redis>
+		</connections>
+	</cache>
+	<database>
+		<connections>
+			<connection id="local">
+				<url>jdbc:mysql://localhost:3300/hr</url>
+				<username>root</username>
+				<password></password>
+				<pool>
+					<size>10000</size>
+					<ping-second>3000</ping-second>
+				</pool>
+			</connection>
+		</connections>
+		<include src="index.xml" />
+	</database>
+	<webapps>
+		<app path="" pattern=""></app>
+	</webapps>
+	<properties>
+		<property name="wenlai" value="wenlai" />
+	</properties>
+</server>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+	<port value="8888" />
+	<work-path value="work" />
+	<pool-size value="1000" />
+	<queue-size value="1000" />
+	<time-out value="3000" />
+	<address value="localhost" />
+	<thread-pool size="30" />
+	<init>
+		<provider class="cn.framework.core.container.LogInitProvider" />
+		<provider class="cn.framework.core.container.ServerInitProvider" />
+		<provider class="cn.framework.mvc.init.MvcInitProvider" />
+	</init>
+	<mvc>
+		<controller package="cn.framework.mvc.server" />
+		<view package="cn.framework.mvc.server.view" output="output/jsp" prefix="/view" />
+	</mvc>
+	<web-apps>
+		<web-app context="exe" docBase="D:\apache-tomcat-8.0.18\webapps\examples" />
+	</web-apps>
+</server>

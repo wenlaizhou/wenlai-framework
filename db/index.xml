@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procedures id="index">
+	<procedure id="select" connection="local">
+		<sql id="select">
+            <![CDATA[
+                select * from #{table} where id = ${id};
+            ]]>
+		</sql>
+	</procedure>
+</procedures>

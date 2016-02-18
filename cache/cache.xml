@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cache>
+	<connections>
+		<redis id="wenlai">
+			<hosts>
+				<host name="cluster1" port="1234" />
+				<host name="cluster2" port="2345" />
+				<host name="cluster3" port="5678" />
+			</hosts>
+			<host name="***.***.***.***" port="6379" />
+			<password>*</password>
+			<db>0</db>
+			<pool>
+				<size>100</size>
+				<ping-second>10</ping-second>
+			</pool>
+		</redis>
+	</connections>
+</cache>
