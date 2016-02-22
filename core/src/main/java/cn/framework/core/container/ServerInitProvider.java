@@ -46,6 +46,7 @@ public class ServerInitProvider implements InitProvider {
             context.addServlet("pool-ui", "cn.framework.core.pool.PoolUI", "/pool-ui");
             context.addServlet("thread-pool-ui", "cn.framework.core.pool.ThreadPoolUI", "/thread-pool-ui");
             context.addServlet("thread-ui", "cn.framework.core.pool.ThreadUI", "/thread-ui");
+            context.addServlet("system-ui", "cn.framework.core.pool.SystemUI", "/system-ui");
             Node threadPoolNode = xpathNode(".//thread-pool", serverNode);
             if (threadPoolNode != null) {
                 String commonPoolSize = childAttribute("common", "size", serverNode);

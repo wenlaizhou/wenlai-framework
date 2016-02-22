@@ -19,9 +19,8 @@ import cn.framework.core.utils.KVMap;
 public class ActionResult {
     
     /**
-     * 返回文本
      * 
-     * @param message 文本信息
+     * @param message
      * @return
      */
     public static ActionResult text(String message) {
@@ -29,17 +28,16 @@ public class ActionResult {
     }
     
     /**
-     * 返回dispatch
      * 
-     * @param forward 跳转路径
+     * @param forward
+     * @param model
      * @return
      */
-    public static ActionResult dispatch(String forward) {
+    public static ActionResult dispatch(String forward, Object model) {
         return new ActionResult(ACTION.DISPATCHER, forward);
     }
     
     /**
-     * 返回视图
      * 
      * @param model
      * @return

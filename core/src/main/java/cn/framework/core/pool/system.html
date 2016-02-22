@@ -43,8 +43,8 @@ body {
 					<li><a href="/service/ui">API</a></li>
 					<li><a href="/pool-ui">POOL</a></li>
 					<li><a href="/thread-pool-ui">THREAD-POOL</a></li>
-					<li class="active"><a href="/thread-ui">THREAD</a></li>
-					<li><a href="/system-ui">SYSTEM</a></li>
+					<li><a href="/thread-ui">THREAD</a></li>
+                    <li class="active"><a href="/system-ui">SYSTEM</a></li>
 				</ul>
 			</div>
 			<!--/.nav-collapse -->
@@ -52,20 +52,8 @@ body {
 	</nav>
 
 	<div class="container">
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>id</th>
-					<th>名称</th>
-					<th>状态</th>
-					<th>dump信息</th>
-				</tr>
-			</thead>
-			<tbody>
-				<content></content>
-			</tbody>
-		</table>
+        ${total}
+		
 	</div>
 
 
@@ -76,20 +64,7 @@ body {
 	<script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script type="text/javascript">
-		function trClick(element, id) {
-			$element = $(element);
-			$tr = $("tr[flag=" + id + "]");
-			if ($tr.css("display") == "none") {
-				$tr.show("slow");
-				$element.removeClass("glyphicon-chevron-down");
-				$element.addClass("glyphicon-chevron-up");
-			}
-			else {
-				$tr.hide("slow");
-				$element.removeClass("glyphicon-chevron-up");
-				$element.addClass("glyphicon-chevron-down");
-			}
-		}
+		
 	</script>
 </body>
 </html>

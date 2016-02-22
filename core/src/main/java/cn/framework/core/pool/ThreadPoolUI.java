@@ -49,5 +49,5 @@ public class ThreadPoolUI extends HttpServlet {
     
     public final static String TR = "<tr><th scope=\"row\">%1$s</th><td>%2$s</td><td>%3$s</td><td>%4$s</td><td>%5$s</td><td>%6$s</td></tr>";
     
-    public static String THREAD_POOL_HTML_TEMPLATE = Files.readResourceText("cn/framework/core/pool/thread-pool.html");
+    public final static String THREAD_POOL_HTML_TEMPLATE = Files.readResourceText("cn/framework/core/pool/thread-pool.html");
 }

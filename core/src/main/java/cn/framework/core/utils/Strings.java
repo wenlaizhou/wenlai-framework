@@ -33,7 +33,7 @@ public final class Strings {
             return Integer.parseInt(intValue);
         }
         catch (Throwable e) {
-            // LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
+            LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
             return defaultValue;
         }
     }

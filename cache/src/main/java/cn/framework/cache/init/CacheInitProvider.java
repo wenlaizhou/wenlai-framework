@@ -82,8 +82,7 @@ public class CacheInitProvider implements InitProvider {
             // TODO 时刻测试cache是否可用，如不可用，切换到本地session
             if (sessionNode != null) {
                 Reflects.setField("cn.framework.cache.session.SessionProvider", "CONN_ID", null, attr("connection", sessionNode, "session"));
-                String type = attr("", sessionNode, "local");
-                switch (type) {
+                switch (attr("type", sessionNode, "local")) {
                     case "local" :
                         Reflects.setField("cn.framework.cache.session.SessionProvider", "LOCAL", null, true);
                         break;

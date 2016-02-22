@@ -2,7 +2,7 @@
 
 #/////////////////////////////////
 #配置：
-MAIN_JAR=main.jar
+MAIN_JAR=coupon.jar
 
 MAIN_CLASS=cn.etcp.coupon.App
 
@@ -10,7 +10,7 @@ UNPACK_ENABLED=false
 
 JMX_ENABLED=true
 
-JMX_PORT=9009
+JMX_PORT=9019
 
 JMX_ACCESS_FILE=jmx.access
 
@@ -24,28 +24,34 @@ HOME=$(dirname $(pwd))
 WORK_DIR=${HOME}/tomcat-work
 
 BIN_DIR=${HOME}/bin
-if [ ! -d ${BIN_PATH} ];then
-    mkdir -p ${BIN_PATH}
+if [ ! -d ${BIN_DIR} ];then
+    mkdir -p ${BIN_DIR}
 fi
 
 LIB_DIR=${HOME}/lib
-if [ ! -d ${LIB_PATH} ];then
-    mkdir -p ${LIB_PATH}
+if [ ! -d ${LIB_DIR} ];then
+    mkdir -p ${LIB_DIR}
 fi
 
 CONF_DIR=${HOME}/conf
-if [ ! -d ${CONF_PATH} ];then
-    mkdir -p ${CONF_PATH}
+if [ ! -d ${CONF_DIR} ];then
+    mkdir -p ${CONF_DIR}
 fi
 
 LOG_DIR=${HOME}/log
-if [ ! -e ${LOG_PATH} ];then
-    mkdir -p ${LOG_PATH}
-    touch ${LOG_PATH}/console.log
+if [ ! -e ${LOG_DIR} ];then
+    mkdir -p ${LOG_DIR}
+    touch ${LOG_DIR}/console.log
 fi
+
+NATIVE_DIR=${HOME}/native
+if [ ! -e ${NATIVE_DIR} ];then
+    mkdir -p ${NATIVE_DIR}
+fi
+
 #rm -f ${LOG_DIR}/*
 
-MAIN_PATH=${LIB_PATH}/${MAIN_JAR}
+MAIN_PATH=${LIB_DIR}/${MAIN_JAR}
 
 UNPACK_DIR=${WORK_DIR}/unpack
 
@@ -91,18 +97,19 @@ PROPERTIES="${PROPERTIES} -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EP
 PROPERTIES="${PROPERTIES} -Duser.dir=${HOME}"
 
 if [ ${JMX_ENABLED} ];then
-    chmod 600 ${JMX_ACCESS_FILE}
-    chmod 600 ${JMX_PWD_FILE}
+    chmod 600 ${CONF_DIR}/${JMX_ACCESS_FILE}
+    chmod 600 ${CONF_DIR}/${JMX_PWD_FILE}
     PROPERTIES="${PROPERTIES} -Djava.rmi.server.hostname=$(hostname)"
     PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.port=${JMX_PORT}"
     PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.authenticate=true"
-    PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.access.file=${JMX_ACCESS_FILE}"
-    PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.password.file=${JMX_PWD_FILE}"
+    PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.access.file=${CONF_DIR}/${JMX_ACCESS_FILE}"
+    PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.password.file=${CONF_DIR}/${JMX_PWD_FILE}"
     PROPERTIES="${PROPERTIES} -Dcom.sun.management.jmxremote.ssl=false"
 fi
 
 PROPERTIES="${PROPERTIES} -Dconf.dir=${CONF_DIR}"
 PROPERTIES="${PROPERTIES} -classpath ${LIB_JARS}"
+PROPERTIES="${PROPERTIES} -Djava.library.path=${NATIVE_DIR}"
 PROPERTIES="${PROPERTIES} -Dlog.dir=${LOG_DIR}"
 PROPERTIES="${PROPERTIES} -Dlib.dir=${LIB_DIR}"
 PROPERTIES="${PROPERTIES} -Dmain.class=${MAIN_CLASS}"
