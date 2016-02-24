@@ -53,7 +53,6 @@ public final class Sockets {
         try (Socket socket = new Socket();) {
             socket.connect(new InetSocketAddress(host, port));
             socket.getOutputStream().write(message.getBytes());
-            socket.close();
             return true;
         }
         catch (Throwable e) {

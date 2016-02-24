@@ -7,6 +7,7 @@
  */
 package cn.framework.core.container;
 
+import static cn.framework.core.utils.Exceptions.processException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
@@ -181,7 +182,7 @@ public class Context {
             c.addServletMapping(pattern, servletName);
         }
         catch (Exception x) {
-            x.printStackTrace();
+            processException(x);
         }
     }
 }

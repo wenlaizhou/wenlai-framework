@@ -12,11 +12,11 @@ import java.util.HashMap;
 import org.w3c.dom.Node;
 import cn.framework.core.container.Context;
 import cn.framework.core.container.InitProvider;
-import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.Arrays;
 import cn.framework.core.utils.KVMap;
 import cn.framework.core.utils.Reflects;
 import cn.framework.core.utils.Strings;
+import static cn.framework.core.utils.Exceptions.processException;
 import static cn.framework.core.utils.Xmls.*;
 
 /**
@@ -57,7 +57,7 @@ public class AsyncInitProvider implements InitProvider {
                         container.put(id, callbackObj);
                     }
                     catch (Exception x) {
-                        LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                        processException(x);
                     }
                 }
                 Reflects.setField("cn.framework.core.async.AsyncProvider", "CONTAINER", container, null);

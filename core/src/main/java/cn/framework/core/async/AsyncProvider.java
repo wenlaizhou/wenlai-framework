@@ -7,6 +7,7 @@
  */
 package cn.framework.core.async;
 
+import static cn.framework.core.utils.Exceptions.processException;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -112,7 +113,7 @@ public class AsyncProvider {
                 success = true;
             }
             catch (Exception e) {
-                LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
+                processException(e);
             }
             try {
                 AsyncCallback callback = findCallback(this.callback);
@@ -120,7 +121,7 @@ public class AsyncProvider {
                     callback.done(AsyncCallback.Context.build(success, (int) watch.checkByOriginal(), result, this.attach));
             }
             catch (Exception e) {
-                LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
+                processException(e);
             }
         }
     }

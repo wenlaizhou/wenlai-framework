@@ -7,6 +7,7 @@
  */
 package cn.framework.core.plug;
 
+import static cn.framework.core.utils.Exceptions.processException;
 import java.lang.reflect.Method;
 import org.apache.logging.log4j.Logger;
 import cn.framework.core.log.LogProvider;
@@ -32,7 +33,7 @@ class PluginWrapper implements MethodInterceptor {
     /**
      * 日志
      */
-    private Logger logger = LogProvider.getLogger("");
+    private Logger logger = LogProvider.getLogger("plugin");
     
     /**
      * 构造
@@ -64,7 +65,7 @@ class PluginWrapper implements MethodInterceptor {
                         }), asyncDeclared.delaySeconds());
                     }
                     catch (Exception ex) {
-                        logger.error(ex.getMessage(), ex);
+                        processException(ex);
                     }
                 }
                 else {
@@ -74,7 +75,7 @@ class PluginWrapper implements MethodInterceptor {
                         }), asyncDeclared.delaySeconds());
                     }
                     catch (Exception ex) {
-                        logger.error(ex.getMessage(), ex);
+                        processException(ex);
                     }
                 }
             }
@@ -83,7 +84,7 @@ class PluginWrapper implements MethodInterceptor {
             }
         }
         catch (Exception x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
         }
         return result;
     }
@@ -111,7 +112,7 @@ class PluginWrapper implements MethodInterceptor {
             }
         }
         catch (Throwable x) {
-            logger.error(x.getMessage(), x);
+            processException(x);
         }
         return null;
     }

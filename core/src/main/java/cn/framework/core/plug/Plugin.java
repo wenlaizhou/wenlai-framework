@@ -7,9 +7,9 @@
  */
 package cn.framework.core.plug;
 
+import static cn.framework.core.utils.Exceptions.processException;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
-import cn.framework.core.log.LogProvider;
 
 /**
  * 插件
@@ -35,7 +35,7 @@ public class Plugin {
             return (T) creator.create();
         }
         catch (Exception e) {
-            LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
+            processException(e);
         }
         return null;
     }

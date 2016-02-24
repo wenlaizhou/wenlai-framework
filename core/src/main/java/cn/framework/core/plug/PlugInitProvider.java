@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import org.w3c.dom.Node;
 import cn.framework.core.container.Context;
 import cn.framework.core.container.InitProvider;
-import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.KVMap;
 import cn.framework.core.utils.Strings;
+import static cn.framework.core.utils.Exceptions.processException;
 import static cn.framework.core.utils.Xmls.*;
 
 /**
@@ -55,7 +55,7 @@ public class PlugInitProvider implements InitProvider {
                                 PLUG_CONTAINER.addKV(callbackName, instance);
                         }
                         catch (Exception x) {
-                            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                            processException(x);
                         }
                     }
                 }

@@ -7,11 +7,6 @@
  */
 package cn.framework.cache;
 
-import cn.framework.cache.init.CacheInitProvider;
-import cn.framework.cache.pool.RedisProvider;
-import cn.framework.core.container.Context;
-import cn.framework.core.utils.Xmls;
-
 /**
  * @author wenlai
  *
@@ -19,13 +14,13 @@ import cn.framework.core.utils.Xmls;
 public class Boot {
     
     /**
+     * 应用入口，测试使用
+     * 
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        CacheInitProvider provider = new CacheInitProvider();
-        provider.init(Context.buildByConf(Xmls.node("cache.xml")));
-        System.out.println(RedisProvider.hashGet("wenlai", RedisProvider.buildKey("wenlai", "james"), "id"));
+        
     }
     
 }

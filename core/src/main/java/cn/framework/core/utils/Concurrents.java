@@ -13,4 +13,7 @@ package cn.framework.core.utils;
  */
 public final class Concurrents {
     
+    public static void main(String[] args) {
+    }
+    
 }

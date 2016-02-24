@@ -9,7 +9,7 @@ package cn.framework.core.utils;
 
 import java.nio.charset.Charset;
 import java.util.Base64;
-import cn.framework.core.log.LogProvider;
+import static cn.framework.core.utils.Exceptions.*;
 
 /**
  * @author wenlai
@@ -18,9 +18,10 @@ import cn.framework.core.log.LogProvider;
 public final class Base64s {
     
     /**
+     * 解码
      * 
-     * @param src
-     * @param code
+     * @param src 原始串
+     * @param code 编码
      * @return
      */
     public static String decode(String src, String code) {
@@ -28,7 +29,7 @@ public final class Base64s {
             return new String(Base64.getDecoder().decode(src.getBytes(Charset.forName(Strings.isNotNullOrEmpty(code) ? code : "utf-8"))));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return Strings.EMPTY;
         }
     }
@@ -44,7 +45,7 @@ public final class Base64s {
             return new String(Base64.getEncoder().encode(src.getBytes(Charset.forName("UTF-8"))));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return Strings.EMPTY;
         }
     }
@@ -60,7 +61,7 @@ public final class Base64s {
             return Base64.getEncoder().encode(src.getBytes(Charset.forName("UTF-8")));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return null;
         }
     }
@@ -76,7 +77,7 @@ public final class Base64s {
             return new String(Base64.getEncoder().encode(src));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return Strings.EMPTY;
         }
     }
@@ -92,7 +93,7 @@ public final class Base64s {
             return Base64.getEncoder().encode(src);
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return null;
         }
     }
@@ -108,7 +109,7 @@ public final class Base64s {
             return new String(Base64.getDecoder().decode(src.getBytes(Charset.forName("UTF-8"))));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return Strings.EMPTY;
         }
     }
@@ -124,7 +125,7 @@ public final class Base64s {
             return Base64.getDecoder().decode(src.getBytes(Charset.forName("UTF-8")));
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return null;
         }
     }
@@ -140,7 +141,7 @@ public final class Base64s {
             return Base64.getDecoder().decode(src);
         }
         catch (Throwable x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
             return null;
         }
     }

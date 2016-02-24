@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.w3c.dom.Node;
-import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.Arrays;
 import cn.framework.core.utils.Base64s;
 import cn.framework.core.utils.KVMap;
@@ -21,6 +20,7 @@ import cn.framework.core.utils.Projects;
 import cn.framework.core.utils.Property;
 import cn.framework.core.utils.Reflects;
 import cn.framework.core.utils.Strings;
+import static cn.framework.core.utils.Exceptions.processException;
 import static cn.framework.core.utils.Xmls.*;
 
 /**
@@ -34,6 +34,10 @@ public class TomcatContainer {
      * 构造容器
      * 
      * @param confOrPath 配置文件路径或配置文件
+     * @throws Exception
+     */
+    /**
+     * @param confOrPath
      * @throws Exception
      */
     public TomcatContainer(String confOrPath) throws Exception {
@@ -82,7 +86,7 @@ public class TomcatContainer {
                             ((InitProvider) Reflects.createInstance(attr("class", providerNode))).init(param);
                         }
                         catch (Exception x) {
-                            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                            processException(x);
                         }
                     }
                 }
@@ -131,7 +135,7 @@ public class TomcatContainer {
                 return true;
         }
         catch (Exception x) {
-            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+            processException(x);
         }
         // resp.setStatus(401);
         try {
@@ -141,7 +145,7 @@ public class TomcatContainer {
             resp.sendError(401);
         }
         catch (Exception e) {
-            LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
+            processException(e);
         }
         return false;
     }
