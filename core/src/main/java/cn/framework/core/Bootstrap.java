@@ -7,6 +7,7 @@
  */
 package cn.framework.core;
 
+
 /**
  * @author wenlai
  *
