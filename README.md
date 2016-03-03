@@ -2,7 +2,8 @@
 a fast,powerful,easy framework
 ***
 monitor anywhere
-!(http://103.25.21.99:8888/app/m1.png)
+***
+![](http://103.25.21.99:8888/app/m1.png)
 ***
 seperated module
 ```xml
