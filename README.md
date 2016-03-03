@@ -5,6 +5,10 @@
 ***
 ![image](https://raw.githubusercontent.com/wenlaizhou/wenlai-framework/master/img/m1.png)
 ***
+*easy to deploy*
+***
+![image](https://raw.githubusercontent.com/wenlaizhou/wenlai-framework/master/img/m2.png)
+***
 *seperated module*
 ```xml
 		<dependency>
@@ -64,7 +68,7 @@
 </server>
 ```
 ***
-#### *database api is very easy and auto manage connection
+#### database api is very easy and framework manages connections automatically
 ***
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
