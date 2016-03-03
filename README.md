@@ -1,11 +1,11 @@
 # wenlai-framework
-a fast,powerful,easy framework
+*a fast,powerful,easy framework*
 ***
-monitor anywhere
+*monitor anywhere*
 ***
 ![image](https://raw.githubusercontent.com/wenlaizhou/wenlai-framework/master/img/m1.png)
 ***
-seperated module
+*seperated module*
 ```xml
 		<dependency>
 			<groupId>cn.framework</groupId>
@@ -34,7 +34,7 @@ seperated module
 		</dependency>
 ```
 ***
-config defines business
+*config defines business*
 ***
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,4 +62,66 @@ config defines business
 	<include src="${conf.dir}/config.xml" />
 	<include src="${conf.dir}/database.xml" />
 </server>
+```
+***
+#### *database api is very easy and auto manage connection
+***
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+	<connections>
+		<connection id="local">
+			<url>jdbc:mysql://localhost:3300/hr?useUnicode=true&amp;characterEncoding=UTF-8</url>
+			<username>root</username>
+			<password></password>
+			<pool>
+				<size>100</size>
+				<ping-second>60</ping-second>
+			</pool>
+		</connection>
+	</connections>
+	<include src="com/hp/web/database/user.xml" />
+	<include src="com/hp/web/database/index.xml" />
+</database>
+```
+***
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<procedures id="candidate" non-property-analyze="true">
+	<procedure id="add" connection="local">
+		<sql id="insert">
+            <![CDATA[
+                insert into candidate (id, name, phone, qq, email, level, owner, follow_status, last_follow_time, create_at, update_at, status) values 
+                (null, ${name}, ${phone}, ${qq}, ${email}, ${level}, ${owner}, 1, null, now(), now(), 1);
+            ]]>
+		</sql>
+		<view />
+	</procedure>
+	<procedure id="selectByOwner" connection="local">
+		<sql id="select">
+	       <![CDATA[select * from candidate where owner = ${owner} and status=1 order by last_follow_time desc limit ${start}, ${end};]]>
+		</sql>
+		<view />
+	</procedure>
+	<procedure id="selectAll" connection="local">
+		<sql id="select">
+           <![CDATA[select * from candidate where status = 1;]]>
+		</sql>
+		<view />
+	</procedure>
+	<procedure id="select" connection="local">
+		<sql id="selectByPage">
+            <![CDATA[select * from candidate where id = ${id} and owner=${owner} and status=1 limit 1;]]>
+		</sql>
+		<sql id="follows">
+		    <![CDATA[select * from follow_up where follow = ${id} and owner=${owner} and status=1 order by update_at desc;]]>
+		</sql>
+		<view />
+	</procedure>
+	<procedure id="selectOne" connection="local">
+		<sql id="select">
+		    <![CDATA[select * from candidate where id = ${id} and owner=${owner} and status=1 limit 1;]]>
+		</sql>
+	</procedure>
+</procedures>
 ```
