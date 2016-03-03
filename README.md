@@ -1,6 +1,40 @@
 # wenlai-framework
 a fast,powerful,easy framework
-
+***
+monitor anywhere
+!(http://)
+***
+seperated module
+```xml
+		<dependency>
+			<groupId>cn.framework</groupId>
+			<artifactId>core</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.framework</groupId>
+			<artifactId>mvc</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.framework</groupId>
+			<artifactId>cache</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.framework</groupId>
+			<artifactId>db</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.framework</groupId>
+			<artifactId>rest</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+```
+***
+config defines business
+***
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
