@@ -30,8 +30,8 @@ public final class ViewBuilder {
     /**
      * 根据配置构建view接口信息
      * 
-     * @param procedureNode
-     * @param context
+     * @param procedureNode 过程节点
+     * @param context 上下文
      * @throws Exception xpath执行失败
      */
     public static void build(Node procedureNode, Context context) throws Exception {

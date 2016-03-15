@@ -10,18 +10,20 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Scanner;
+
 import cn.framework.core.log.LogProvider;
 
 /**
  * nio文件帮助类
- * 
+ *
  * @author wenlai
  */
 public final class Files {
-    
+
     /**
      * 创建目录<br>
      * 如果存在目录则不创建
+     *
      * @param path
      */
     public static void createDirectory(String path) {
@@ -35,11 +37,12 @@ public final class Files {
             }
         }
     }
-    
+
     /**
      * 获取资源
-     * 
+     *
      * @param path
+     *
      * @return
      */
     public static byte[] readResource(String path) {
@@ -56,11 +59,12 @@ public final class Files {
         }
         return null;
     }
-    
+
     /**
      * 以utf-8格式读取资源
-     * 
+     *
      * @param path
+     *
      * @return
      */
     public static String readResourceText(String path) {
@@ -75,10 +79,10 @@ public final class Files {
         }
         return Strings.EMPTY;
     }
-    
+
     /**
      * 写文件
-     * 
+     *
      * @param path
      * @param data
      */
@@ -90,11 +94,12 @@ public final class Files {
             LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
         }
     }
-    
+
     /**
      * 获取文件扩展名
-     * 
+     *
      * @param path
+     *
      * @return
      */
     public static String getExtension(String path) {
@@ -103,11 +108,11 @@ public final class Files {
         int indexOfDot = fileName.lastIndexOf(".");
         return indexOfDot > -1 ? fileName.substring(indexOfDot + 1).toLowerCase() : Strings.EMPTY;
     }
-    
+
     /**
      * 获取去除路径后的文件名<br>
      * cn/framework/core/hello.class -> hello.class
-     * 
+     *
      * @return
      */
     public static String getName(String path) {
@@ -115,10 +120,10 @@ public final class Files {
         index = index > -1 ? index : path.lastIndexOf('\\');
         return index > -1 ? path.substring(index + 1) : path;
     }
-    
+
     /**
      * newReader使用，标识newReader返回的reader类型
-     * 
+     *
      * @author wenlai
      */
     public enum ReaderType {
@@ -127,10 +132,10 @@ public final class Files {
          */
         BUFFER
     }
-    
+
     /**
      * 文件路径，返回Reader
-     * 
+     *
      * @param path 文件路径
      * @param type 可为空，指定Reader的类型
      */
@@ -140,9 +145,9 @@ public final class Files {
                 return java.nio.file.Files.newBufferedReader(Paths.get(path));
             }
             switch (type[0]) {
-                case BUFFER :
+                case BUFFER:
                     return java.nio.file.Files.newBufferedReader(Paths.get(path));
-                default :
+                default:
                     return java.nio.file.Files.newBufferedReader(Paths.get(path));
             }
         }
@@ -151,11 +156,12 @@ public final class Files {
         }
         return null;
     }
-    
+
     /**
      * 文件路径，返回InputStream
-     * 
+     *
      * @param path 文件路径
+     *
      * @return
      */
     public static InputStream newInputStream(String path, OpenOption... option) {
@@ -169,11 +175,12 @@ public final class Files {
         }
         return null;
     }
-    
+
     /**
      * 文件是否存在
-     * 
+     *
      * @param filePath 文件路径
+     *
      * @return
      */
     public static boolean exist(String filePath) {
@@ -186,11 +193,12 @@ public final class Files {
             return false;
         }
     }
-    
+
     /**
      * 将文件当做文本文档读取，并返回所有字符
-     * 
+     *
      * @param contentOrPath 文件路径
+     *
      * @return
      */
     public static String read(String contentOrPath, String... charset) {
@@ -204,12 +212,13 @@ public final class Files {
         }
         return contentOrPath;
     }
-    
+
     /**
      * 读取文件，附带编码读取
-     * 
+     *
      * @param contentOrPath
      * @param charset
+     *
      * @return
      */
     public static String read(String contentOrPath, String charset) {
@@ -237,11 +246,12 @@ public final class Files {
         }
         return contentOrPath;
     }
-    
+
     /**
      * 二进制读取
-     * 
+     *
      * @param filePath
+     *
      * @return
      */
     public static byte[] readBytes(String filePath) {
@@ -263,11 +273,12 @@ public final class Files {
         }
         return null;
     }
-    
+
     /**
      * 将文件当成文本文档读取，并返回所有行数组
-     * 
+     *
      * @param filePath 文件路径
+     *
      * @return
      */
     public static String[] readAllLines(String filePath) {
@@ -279,10 +290,10 @@ public final class Files {
             return null;
         }
     }
-    
+
     /**
      * 输出文件每一行数据
-     * 
+     *
      * @param filePath
      */
     public static void readLine(String filePath) {
@@ -298,29 +309,31 @@ public final class Files {
         }
         return;
     }
-    
+
     /**
      * 添加内容到指定文件
-     * 
+     *
      * @param content
      * @param filePath
      */
     public static boolean append(String content, String filePath) {
         return append(content.getBytes(Charset.forName("UTF-8")), filePath);
     }
-    
+
     /**
      * 将内容添加到指定文件中
-     * 
+     *
      * @param buffer
      * @param filePath
+     *
      * @return
      */
     public static boolean append(byte[] buffer, String filePath) {
         try {
             Path path = Paths.get(filePath);
-            if (!exist(filePath))
+            if (!exist(filePath)) {
                 java.nio.file.Files.createFile(path);
+            }
             java.nio.file.Files.write(path, buffer, StandardOpenOption.APPEND);
             return true;
         }
@@ -329,13 +342,14 @@ public final class Files {
             return false;
         }
     }
-    
+
     /**
      * 指定buffer长度添加到文件
-     * 
+     *
      * @param buffer
      * @param length
      * @param filePath
+     *
      * @return
      */
     public static boolean append(byte[] buffer, int length, String filePath) {
@@ -343,27 +357,29 @@ public final class Files {
         System.arraycopy(buffer, 0, newBuffer, 0, length);
         return append(newBuffer, filePath);
     }
-    
+
     /**
      * 将内容添加到文件末尾，并加上换行符
-     * 
+     *
      * @param content
      * @param filePath
+     *
      * @return
      */
     public static boolean appendLine(String content, String filePath) {
         return append(content + "\n", filePath);
     }
-    
+
     /**
      * 删除文件
-     * 
+     *
      * @param filePath
      */
     public static boolean delete(String filePath) {
         try {
-            if (exist(filePath))
+            if (exist(filePath)) {
                 java.nio.file.Files.delete(Paths.get(filePath));
+            }
             return true;
         }
         catch (Throwable x) {
@@ -371,12 +387,13 @@ public final class Files {
         }
         return false;
     }
-    
+
     /**
      * 写文件
-     * 
+     *
      * @param stream
      * @param path
+     *
      * @return
      */
     public static boolean write(InputStream stream, String path) {
@@ -393,12 +410,13 @@ public final class Files {
         }
         return false;
     }
-    
+
     /**
      * 覆盖文件
-     * 
+     *
      * @param content
      * @param filePath
+     *
      * @return
      */
     public static boolean writeOverride(String content, String filePath) {

@@ -24,12 +24,7 @@ public final class ConnectionPool extends Pool<DbConnection> {
     /**
      * 创建连接池
      * 
-     * @param id
-     * @param size
-     * @param username
-     * @param pwd
-     * @param url
-     * @param pingSecond
+     * @param config 参数
      * @throws Exception
      */
     public static void createPool(KVMap config) throws Exception {
@@ -62,7 +57,7 @@ public final class ConnectionPool extends Pool<DbConnection> {
      * </tbody>
      * </table>
      * 
-     * @param size
+     * @param config 参数
      * @throws Exception
      */
     private ConnectionPool(KVMap config) throws Exception {

@@ -8,23 +8,27 @@
 package cn.framework.core;
 
 
+import cn.framework.core.utils.Springs;
+
 /**
  * @author wenlai
- *
  */
-public class Bootstrap {
-    
+public class Bootstrap
+{
+
     /**
      * 应用入口<br>
      * core 测试使用
      * java.util.logging.config.file<br>
      * java.util.logging.manager
-     * 
+     *
      * @param args
+     *
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
-        
+    public static void main(String[] args) throws Exception
+    {
+        System.out.println(Springs.ContextRegister.class.getName());
     }
-    
+
 }

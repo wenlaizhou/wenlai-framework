@@ -8,12 +8,16 @@
 package cn.framework.core.container;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+
+import cn.framework.core.utils.Exceptions;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.w3c.dom.Node;
 import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.Reflects;
 import cn.framework.core.utils.Strings;
+
 import static cn.framework.core.utils.Xmls.*;
 
 /**
@@ -25,7 +29,7 @@ import static cn.framework.core.utils.Xmls.*;
  *         -Dcom.sun.management.jmxremote.authenticate=false
  */
 public class ServerInitProvider implements InitProvider {
-    
+
     /*
      * @see cn.framework.core.container.InitProvider#init(cn.framework.core.container.Context)
      */
@@ -34,6 +38,9 @@ public class ServerInitProvider implements InitProvider {
         try {
             Node serverNode = xpathNode("//server", context.getConf());
             context.getTomcat().setPort(0);
+            /**
+             * build connector
+             */
             Connector connector = new Connector(Http11Nio2Protocol.class.getName());
             connector.setAttribute("connectionTimeout", childAttribute("time-out", "value", serverNode, "3000"));
             connector.setAllowTrace(true);
@@ -43,10 +50,9 @@ public class ServerInitProvider implements InitProvider {
             context.getTomcat().getService().addConnector(connector);
             context.getTomcat().setConnector(connector);
             context.getTomcat().getHost().setAppBase("ROOT");
-            context.addServlet("pool-ui", "cn.framework.core.pool.PoolUI", "/pool-ui");
-            context.addServlet("thread-pool-ui", "cn.framework.core.pool.ThreadPoolUI", "/thread-pool-ui");
-            context.addServlet("thread-ui", "cn.framework.core.pool.ThreadUI", "/thread-ui");
-            context.addServlet("system-ui", "cn.framework.core.pool.SystemUI", "/system-ui");
+            /**
+             * build thread-pool
+             */
             Node threadPoolNode = xpathNode(".//thread-pool", serverNode);
             if (threadPoolNode != null) {
                 String commonPoolSize = childAttribute("common", "size", serverNode);
@@ -54,10 +60,40 @@ public class ServerInitProvider implements InitProvider {
                 Reflects.setField("cn.framework.core.pool.ThreadPool", "commonPoolSize", Strings.parseInt(commonPoolSize, 30), null);
                 Reflects.setField("cn.framework.core.pool.ThreadPool", "schedulePoolSize", Strings.parseInt(scheduleSize, 10), null);
             }
+            /**
+             * build context-params
+             */
+            Node contextParamsNode = xpathNode("//context-params", context.getConf());
+            if (contextParamsNode != null) {
+                ArrayList<Node> contextParams = xpathNodesArray(".//context-param", contextParamsNode);
+                if (contextParams != null && contextParams.size() > 0) {
+                    for (Node contextParamNode : contextParams) {
+                        context.getContext().addParameter(attr("name", contextParamNode), attr("value", contextParamNode));
+                    }
+                }
+            }
+            /**
+             * build listeners
+             */
+            Node listenersNode = xpathNode("//listeners", context.getConf());
+            if (listenersNode != null) {
+                ArrayList<Node> listenerNodes = xpathNodesArray(".//listener", listenersNode);
+                if (listenerNodes != null && listenerNodes.size() > 0) {
+                    for (Node listenerNode : listenerNodes) {
+                        try {
+                            context.getContext().addApplicationListener(attr("class", listenerNode));
+                            LogProvider.getFrameworkInfoLogger().error("add listener : {}", attr("class", listenerNode));
+                        }
+                        catch (Exception x) {
+                            Exceptions.processException(x);
+                        }
+                    }
+                }
+            }
         }
         catch (Exception x) {
             LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
         }
     }
-    
+
 }

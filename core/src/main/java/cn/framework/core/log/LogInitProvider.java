@@ -30,13 +30,13 @@ import static cn.framework.core.utils.Xmls.*;
  */
 public class LogInitProvider implements InitProvider {
     
-    /*
+    /**
      * log4j配置通过注入方式加载
      * 
      * @see cn.framework.core.container.InitProvider#init(cn.framework.core.container.Context)
      */
     @Override
-    public void init(final Context context) throws Exception {
+    public synchronized void init(final Context context) throws Exception {
         // Node log4jNode = xpathNode("//log4j", context.getConf());
         // if (log4jNode != null) {
         // LogProvider.init(attr("src", log4jNode));

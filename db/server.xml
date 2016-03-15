@@ -13,7 +13,7 @@
 		<provider class="cn.framework.mvc.init.MvcInitProvider" />
 		<provider class="cn.framework.db.init.DbInitProvider" />
 		<provider class="cn.framework.cache.init.CacheInitProvider" />
-		<provider class="cn.framework.search.init.SearchInitProvider">
+		<provider class="cn.framework.init.SearchInitProvider">
 			<init-param name="" value="" />
 			<init-param name="" value="" />
 		</provider>

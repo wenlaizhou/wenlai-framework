@@ -20,6 +20,25 @@ import cn.framework.mvc.route.ActionContainer.METHOD;
  * @author wenlai
  */
 public class HttpContext {
+
+    /**
+     * 获取int类型的请求参数
+     * @param key key
+     * @return
+     */
+    public int getIntParam(String key) {
+        return Strings.parseInt(key);
+    }
+
+    /**
+     * 获取int类型请求参数
+     * @param key key
+     * @param defaultValue 默认值
+     * @return
+     */
+    public int getIntParam(String key, int defaultValue) {
+        return Strings.parseInt(key, defaultValue);
+    }
     
     /**
      * 返回请求体内容
