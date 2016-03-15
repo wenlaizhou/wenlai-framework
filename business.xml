@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procedures id="business">
+	<procedure id="xxx" transaction="false" connection="wukong">
+		<view>
+			<path>/xxx/get</path>
+			<method>get</method>
+		</view>
+		<sql id="xx" returnId="true" connection="wukong">
+			select * from user where id>${id};
+		</sql>
+		<sql id="x" cached="false">
+			select * from user where status=${status};
+		</sql>
+		<sql>
+			<![CDATA[
+			]]>
+		</sql>
+		<success></success>
+		<message></message>
+	</procedure>
+</procedures>
