@@ -1,8 +1,0 @@
-<zookeeper>
-	<connections timeout="3000">
-		<connection host="**.**.**.*" port="*" />
-	</connections>
-	<pool id="zoo">
-		<size>10</size>
-	</pool>
-</zookeeper>

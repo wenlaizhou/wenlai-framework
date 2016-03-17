@@ -1,5 +1,0 @@
-<rest-services>
-	<service servicePath="/service/*">
-		<package value="cn.etcp.framework.resource" />
-	</service>
-</rest-services>
