@@ -8,19 +8,14 @@
 package cn.framework.db;
 
 import cn.framework.core.container.TomcatContainer;
-import cn.framework.core.utils.Exceptions;
 import cn.framework.core.utils.Projects;
-import cn.framework.core.utils.Property;
-import com.alibaba.druid.pool.DruidDataSource;
-
-import javax.sql.DataSource;
 
 /**
  * @author wenlai
  */
 public class Boot {
 
-    private static DataSource dataSourceInstance = null;
+    //    private static DataSource dataSourceInstance = null;
 
     /**
      * 应用入口，测试使用
@@ -47,36 +42,36 @@ public class Boot {
         tomcat.start();
     }
 
-    public static DataSource getDatasource() {
-        if (dataSourceInstance != null) {
-            return dataSourceInstance;
-        }
-        synchronized (Boot.class) {
-            if (dataSourceInstance == null) {
-                try {
-                    Property.set("url", "jdbc:mysql://101.201.211.1:3336/hr");
-                    Property.set("username", "root");
-                    Property.set("password", "Etcp2012@Etcp2012");
-                    Property.set("filters", "stat,log4j");
-                    DruidDataSource dataSource = new DruidDataSource();
-                    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-                    dataSource.setUsername("root");
-                    dataSource.setPassword("Etcp2012@Etcp2012");
-                    dataSource.setUrl("jdbc:mysql://101.201.211.1:3336/hr");
-                    dataSource.setInitialSize(5);
-                    dataSource.setMinIdle(1);
-                    dataSource.setMaxActive(10);
-                    dataSource.setFilters("stat.log4j");// 启用监控统计功能
-                    dataSource.setPoolPreparedStatements(false); // for mysql
-                    dataSourceInstance = dataSource;
-                }
-                catch (Exception x) {
-                    Exceptions.processException(x);
-                }
-            }
-        }
-        return dataSourceInstance;
-    }
+    //    public static DataSource getDatasource() {
+    //        if (dataSourceInstance != null) {
+    //            return dataSourceInstance;
+    //        }
+    //        synchronized (Boot.class) {
+    //            if (dataSourceInstance == null) {
+    //                try {
+    //                    Property.set("url", "jdbc:mysql://101.201.211.1:3336/hr");
+    //                    Property.set("username", "root");
+    //                    Property.set("password", "Etcp2012@Etcp2012");
+    //                    Property.set("filters", "stat,log4j");
+    //                    DruidDataSource dataSource = new DruidDataSource();
+    //                    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+    //                    dataSource.setUsername("root");
+    //                    dataSource.setPassword("Etcp2012@Etcp2012");
+    //                    dataSource.setUrl("jdbc:mysql://101.201.211.1:3336/hr");
+    //                    dataSource.setInitialSize(5);
+    //                    dataSource.setMinIdle(1);
+    //                    dataSource.setMaxActive(10);
+    //                    dataSource.setFilters("stat.log4j");// 启用监控统计功能
+    //                    dataSource.setPoolPreparedStatements(false); // for mysql
+    //                    dataSourceInstance = dataSource;
+    //                }
+    //                catch (Exception x) {
+    //                    Exceptions.processException(x);
+    //                }
+    //            }
+    //        }
+    //        return dataSourceInstance;
+    //    }
 
     //    public static class Myinitor implements WebApplicationInitializer {
     //

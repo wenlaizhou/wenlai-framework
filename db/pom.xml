@@ -11,6 +11,11 @@
         <!--<url>http://103.25.20.51:8081/nexus/content/repositories/cn.etcp</url>-->
         <!--</repository>-->
         <repository>
+            <id>wenlai-repo</id>
+            <name>framework</name>
+            <url>http://101.201.211.1:8088/nexus/content/repositories/framework/</url>
+        </repository>
+        <repository>
             <id>java.net</id>
             <name>javanet</name>
             <url>https://maven.java.net/content/repositories/releases/</url>
@@ -20,10 +25,36 @@
             <name>spring</name>
             <url>http://repo.spring.io/plugins-release/springframework/</url>
         </repository>
+        <repository>
+            <id>etcp-repo</id>
+            <url>http://10.86.10.51:8081/nexus/content/repositories/cn.etcp/</url>
+        </repository>
     </repositories>
     <name>db</name>
     <url>http://maven.apache.org</url>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.html</include>
+                </includes>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>junit:junit</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>pom.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -59,11 +90,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>poi-scratchpad</artifactId>
-            <version>3.13-20150929</version>
         </dependency>
         <dependency>
             <groupId>org.apache</groupId>

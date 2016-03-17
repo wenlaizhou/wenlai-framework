@@ -3,6 +3,10 @@ package cn.framework.core.container;
 import cn.framework.core.pool.SystemUI;
 import cn.framework.core.pool.ThreadPoolUI;
 import cn.framework.core.pool.ThreadUI;
+import cn.framework.core.pool.TomcatUI;
+import cn.framework.core.utils.KVMap;
+import org.apache.catalina.manager.HTMLManagerServlet;
+import org.apache.catalina.manager.StatusManagerServlet;
 
 /**
  * project code
@@ -22,9 +26,19 @@ public class MonitorInitProvider implements InitProvider {
      */
     @Override
     public synchronized void init(Context context) throws Exception {
+        /**
+         * add custom monitor
+         */
         context.addServlet("pool-ui", "cn.framework.core.pool.PoolUI", "/pool-ui");
         context.addServlet("thread-pool-ui", ThreadPoolUI.class.getName(), "/thread-pool-ui");
         context.addServlet("thread-ui", ThreadUI.class.getName(), "/thread-ui");
         context.addServlet("system-ui", SystemUI.class.getName(), "/system-ui");
+        context.addServlet("container-ui", TomcatUI.class.getName(), "/tomcat-manager");
+        /**
+         * add tomcat monitor
+         */
+        context.addServlet(null, "manager-status", StatusManagerServlet.class.getName(), "/text/*", KVMap.newKvMap("debug", 0), -1, true);
+        context.addServlet(null, "manager-cmd", StatusManagerServlet.class.getName(), "/status/*", KVMap.newKvMap("debug", 0), -1, true);
+        context.addServlet(null, "manager-html", HTMLManagerServlet.class.getName(), "/html/*", KVMap.newKvMap("debug", 0), -1, true);
     }
 }

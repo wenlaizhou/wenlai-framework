@@ -7,22 +7,15 @@
  */
 package cn.framework.core.container;
 
-import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.framework.core.log.LogProvider;
+import cn.framework.core.utils.*;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.commons.logging.Log;
 import org.w3c.dom.Node;
-import cn.framework.core.utils.Arrays;
-import cn.framework.core.utils.Base64s;
-import cn.framework.core.utils.KVMap;
-import cn.framework.core.utils.Projects;
-import cn.framework.core.utils.Property;
-import cn.framework.core.utils.Reflects;
-import cn.framework.core.utils.Strings;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 import static cn.framework.core.utils.Exceptions.processException;
 import static cn.framework.core.utils.Xmls.*;
@@ -35,19 +28,44 @@ import static cn.framework.core.utils.Xmls.*;
 public class TomcatContainer {
 
     /**
+     * 角色名称
+     */
+    public static final String ROLE_NAME = "admin";
+    /**
      * 构造容器
      *
      * @param confOrPath 配置文件路径或配置文件
      * @throws Exception
      */
+    private static volatile String USER_NAME = "wenlai";
+    private static volatile String PASSWORD = "wenlai";
+    /**
+     * 配置
+     */
+    public final Node config;
+    /**
+     * 容器实例
+     */
+    public final Tomcat tomcat;
+    /**
+     * 上下文
+     */
+    public final StandardContext context;
+
     /**
      * @param confOrPath
      *
      * @throws Exception
      */
     public TomcatContainer(String confOrPath) throws Exception {
+        /**
+         * build node by xml config
+         */
         this.config = node(confOrPath);
         System.out.println(toXmlString(this.config));
+        /**
+         * add property support
+         */
         Node propertiesNode = xpathNode("//properties", this.config);
         ArrayList<Node> properties = childs("property", propertiesNode);
         if (Arrays.isNotNullOrEmpty(properties)) {
@@ -56,6 +74,9 @@ public class TomcatContainer {
                 Property.set(attr("name", property), Strings.isNotNullOrEmpty(textContent) ? textContent.trim() : attr("value", property));
             }
         }
+        /**
+         * add security support
+         */
         Node securityNode = xpathNode("//security", this.config);
         if (securityNode != null) {
             USER_NAME = attr("username", securityNode, "wenlai");
@@ -63,9 +84,69 @@ public class TomcatContainer {
             Property.set("username", USER_NAME);
             Property.set("password", PASSWORD);
         }
+        /**
+         * build tomcat
+         */
         this.tomcat = new Tomcat();
         this.tomcat.setBaseDir(Projects.TOMCAT_DIR);
+        this.tomcat.addRole(USER_NAME, ROLE_NAME);
+        this.tomcat.addUser(USER_NAME, PASSWORD);
         this.context = (StandardContext) tomcat.addContext("", null);
+        this.context.setReloadable(true);
+        this.context.setDelegate(true);
+        this.context.setPrivileged(true);
+    }
+
+    /**
+     * 框架基础认证
+     *
+     * @param req request
+     * @param resp response
+     *
+     * @return
+     */
+    public static boolean basicAuth(HttpServletRequest req, HttpServletResponse resp) {
+        if (req == null || resp == null) {
+            return false;
+        }
+        try {
+            String auth = req.getHeader("Authorization");
+            if (Strings.isNotNullOrEmpty(auth) && Base64s.decode(auth.split(" ")[1]).equals(String.format("%1$s:%2$s", getUsername(), getPassword()))) {
+                return true;
+            }
+        }
+        catch (Exception x) {
+            processException(x);
+        }
+        // resp.setStatus(401);
+        try {
+            resp.setHeader("Cache-Control", "no-store");
+            resp.setDateHeader("Expires", 0);
+            resp.setHeader("WWW-authenticate", "Basic Realm=\"wenlai.framework\"");
+            resp.sendError(401);
+        }
+        catch (Exception e) {
+            processException(e);
+        }
+        return false;
+    }
+
+    /**
+     * 获取框架用户名
+     *
+     * @return
+     */
+    public final static String getUsername() {
+        return USER_NAME;
+    }
+
+    /**
+     * 获取框架密码
+     *
+     * @return
+     */
+    public static final String getPassword() {
+        return PASSWORD;
     }
 
     /**
@@ -116,75 +197,4 @@ public class TomcatContainer {
         this.tomcat.start();
         this.tomcat.getServer().await();
     }
-
-    /**
-     * 配置
-     */
-    public final Node config;
-
-    /**
-     * 容器实例
-     */
-    public final Tomcat tomcat;
-
-    /**
-     * 上下文
-     */
-    public final StandardContext context;
-
-    /**
-     * 框架基础认证
-     *
-     * @param req
-     * @param resp
-     *
-     * @return
-     */
-    public static boolean basicAuth(HttpServletRequest req, HttpServletResponse resp) {
-        if (req == null || resp == null) {
-            return false;
-        }
-        try {
-            String auth = req.getHeader("Authorization");
-            if (Strings.isNotNullOrEmpty(auth) && Base64s.decode(auth.split(" ")[1]).equals(String.format("%1$s:%2$s", getUsername(), getPassword()))) {
-                return true;
-            }
-        }
-        catch (Exception x) {
-            processException(x);
-        }
-        // resp.setStatus(401);
-        try {
-            resp.setHeader("Cache-Control", "no-store");
-            resp.setDateHeader("Expires", 0);
-            resp.setHeader("WWW-authenticate", "Basic Realm=\"wenlai.framework\"");
-            resp.sendError(401);
-        }
-        catch (Exception e) {
-            processException(e);
-        }
-        return false;
-    }
-
-    /**
-     * 获取框架用户名
-     *
-     * @return
-     */
-    public final static String getUsername() {
-        return USER_NAME;
-    }
-
-    /**
-     * 获取框架密码
-     *
-     * @return
-     */
-    public static final String getPassword() {
-        return PASSWORD;
-    }
-
-    private static volatile String USER_NAME = "admin";
-
-    private static volatile String PASSWORD = "admin";
 }

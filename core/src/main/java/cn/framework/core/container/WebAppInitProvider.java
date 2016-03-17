@@ -7,14 +7,13 @@
  */
 package cn.framework.core.container;
 
-import java.util.ArrayList;
-
 import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.Exceptions;
 import cn.framework.core.utils.KVMap;
 import cn.framework.core.utils.Strings;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
 
 import static cn.framework.core.utils.Xmls.*;
 
@@ -81,7 +80,8 @@ public class WebAppInitProvider implements InitProvider {
                         try {
                             String loadUp = childTextContent("loadOnStartup", servletNode);
                             int loadOnStart = Strings.isNotNullOrEmpty(loadUp) ? Strings.parseInt(loadUp, -1) : -1;
-                            context.addServlet(attr("name", servletNode), attr("class", servletNode), attr("pattern", servletNode), buildParams(".//param", servletNode), loadOnStart);
+                            boolean auth = Boolean.parseBoolean(childTextContent("auth", servletNode, "false"));
+                            context.addServlet(null, attr("name", servletNode), attr("class", servletNode), attr("pattern", servletNode), buildParams(".//param", servletNode), loadOnStart, auth);
                             LogProvider.getFrameworkInfoLogger().error("add buildServlets : {}", attr("class", servletNode));
                         }
                         catch (Exception x) {

@@ -8,13 +8,13 @@
 package cn.framework.core;
 
 
-import cn.framework.core.utils.Springs;
+import cn.framework.core.container.TomcatContainer;
+import cn.framework.core.utils.Projects;
 
 /**
  * @author wenlai
  */
-public class Bootstrap
-{
+public class Bootstrap {
 
     /**
      * 应用入口<br>
@@ -22,13 +22,14 @@ public class Bootstrap
      * java.util.logging.config.file<br>
      * java.util.logging.manager
      *
-     * @param args
+     * @param args 输入参数
      *
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception
-    {
-        System.out.println(Springs.ContextRegister.class.getName());
+    public static void main(String[] args) throws Exception {
+        TomcatContainer container = new TomcatContainer(Projects.CONF_DIR + "/server.xml");
+        container.init();
+        container.start();
     }
 
 }

@@ -7,18 +7,18 @@
  */
 package cn.framework.core.container;
 
-import static cn.framework.core.utils.Exceptions.processException;
-
+import cn.framework.core.utils.KVMap;
+import cn.framework.core.utils.Maps;
 import cn.framework.core.utils.Pair;
+import cn.framework.core.utils.Strings;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.w3c.dom.Node;
-import cn.framework.core.utils.KVMap;
-import cn.framework.core.utils.Maps;
-import cn.framework.core.utils.Strings;
+
+import static cn.framework.core.utils.Exceptions.processException;
 
 /**
  * 初始化参数<br>
@@ -32,31 +32,30 @@ public class Context {
      * 自定义初始化参数
      */
     private KVMap params = null;
+    /**
+     * 上下文
+     */
+    private StandardContext context = null;
+    /**
+     * tomcat
+     */
+    private Tomcat tomcat = null;
+    /**
+     * 配置项
+     */
+    private Node conf = null;
 
     /**
-     * 获取初始化参数
+     * 构造函数
      *
-     * @param name
-     *
-     * @return
+     * @param conf
+     * @param tomcat
+     * @param context
      */
-    public synchronized String getInitParameter(String name) {
-        return params == null ? Strings.EMPTY : params.getString(name);
-    }
-
-    /**
-     * 设置初始化参数
-     *
-     * @param params
-     *
-     * @return
-     */
-    public synchronized Context setParams(KVMap params) {
-        if (this.params != null) {
-            this.params.clear();
-        }
-        this.params = params;
-        return this;
+    private Context(Node conf, Tomcat tomcat, StandardContext context) {
+        this.conf = conf;
+        this.tomcat = tomcat;
+        this.context = context;
     }
 
     /**
@@ -84,31 +83,29 @@ public class Context {
     }
 
     /**
-     * 上下文
-     */
-    private StandardContext context = null;
-
-    /**
-     * tomcat
-     */
-    private Tomcat tomcat = null;
-
-    /**
-     * 配置项
-     */
-    private Node conf = null;
-
-    /**
-     * 构造函数
+     * 获取初始化参数
      *
-     * @param conf
-     * @param tomcat
-     * @param context
+     * @param name
+     *
+     * @return
      */
-    private Context(Node conf, Tomcat tomcat, StandardContext context) {
-        this.conf = conf;
-        this.tomcat = tomcat;
-        this.context = context;
+    public synchronized String getInitParameter(String name) {
+        return params == null ? Strings.EMPTY : params.getString(name);
+    }
+
+    /**
+     * 设置初始化参数
+     *
+     * @param params
+     *
+     * @return
+     */
+    public synchronized Context setParams(KVMap params) {
+        if (this.params != null) {
+            this.params.clear();
+        }
+        this.params = params;
+        return this;
     }
 
     /**
@@ -195,6 +192,21 @@ public class Context {
      * @param loadOnStartup    启动顺序
      */
     public synchronized void addServlet(StandardContext c, String servletName, String servletClassName, String pattern, KVMap initParams, int loadOnStartup) {
+        addServlet(c, servletName, servletClassName, pattern, initParams, loadOnStartup, false);
+    }
+
+    /**
+     * 向上下文中添加servlet
+     *
+     * @param c                上下文
+     * @param servletName      servlet名称
+     * @param servletClassName servlet类名
+     * @param pattern          匹配路径
+     * @param initParams       初始化参数列表
+     * @param loadOnStartup    启动顺序
+     * @param auth             是否需要验证
+     */
+    public synchronized void addServlet(StandardContext c, String servletName, String servletClassName, String pattern, KVMap initParams, int loadOnStartup, boolean auth) {
         try {
             c = c == null ? this.context : c;
             if (c == null) {
@@ -209,10 +221,13 @@ public class Context {
             }
             if (Maps.isNotNullOrEmpty(initParams)) {
                 for (int i = 0; i < initParams.keySet().size(); i++)
-                    newServlet.addInitParameter(initParams.getIndexedKey(i), initParams.getString(initParams.getIndexedKey(i)));// 由于在开始执行，所以为了代码美观，没有做优化
+                    newServlet.addInitParameter(initParams.getIndexedKey(i), initParams.getString(initParams.getIndexedKey(i)));
             }
             newServlet.setAsyncSupported(true);
             newServlet.setLoadOnStartup(1);
+            if (auth) {
+                newServlet.addSecurityReference(TomcatContainer.ROLE_NAME, Strings.EMPTY);
+            }
             c.addChild(newServlet);
             c.addServletMapping(pattern, servletName);
         }

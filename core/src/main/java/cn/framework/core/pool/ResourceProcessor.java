@@ -38,7 +38,7 @@ public class ResourceProcessor {
     /**
      * 资源库
      */
-    private volatile static ConcurrentLinkedQueue<AutoCloseable> resourceQueue = new ConcurrentLinkedQueue<AutoCloseable>();
+    private volatile static ConcurrentLinkedQueue<AutoCloseable> resourceQueue = new ConcurrentLinkedQueue<>();
     
     /**
      * 创建资源回收处理器

@@ -7,22 +7,35 @@
  */
 package cn.framework.core.utils;
 
-import static cn.framework.core.log.LogProvider.*;
+import cn.framework.core.log.FrameworkLogger;
+import cn.framework.core.log.GlobalLogProcessor;
 
 /**
- * @author wenlai
+ * 统一framework异常处理<br>
+ * 可以自定义日志处理器bean-name is globalLogFilter
  *
+ * @author wenlai
  */
 public final class Exceptions {
-    
+
+    private final static GlobalLogProcessor FRAMEWORK_LOG_HANDLER = Springs.getContext() != null && Springs.get("globalLogProcessor") != null ? Springs.get("globalLogProcessor") : new FrameworkLogger();
+
     /**
      * 对异常进行处理
-     * 
-     * @param exception
+     *
+     * @param exception exe
      */
     public static void processException(Throwable exception) {
-        if (exception != null) {
-            getFrameworkErrorLogger().error(exception.getMessage(), exception);
-        }
+        FRAMEWORK_LOG_HANDLER.processException(exception);
     }
+
+    /**
+     * 获取日志处理器
+     *
+     * @return
+     */
+    public static GlobalLogProcessor logProcessor() {
+        return FRAMEWORK_LOG_HANDLER;
+    }
+
 }

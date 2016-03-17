@@ -6,11 +6,11 @@
     <version>2.0.0</version>
     <packaging>jar</packaging>
     <repositories>
-        <!--<repository>-->
-        <!--<id>cn.etcp</id>-->
-        <!--<name>ETCP-JAVA</name>-->
-        <!--<url>http://103.25.20.51:8081/nexus/content/repositories/cn.etcp/</url>-->
-        <!--</repository>-->
+        <repository>
+            <id>wenlai-repo</id>
+            <name>framework</name>
+            <url>http://101.201.211.1:8088/nexus/content/repositories/framework/</url>
+        </repository>
         <repository>
             <id>java.net</id>
             <name>javanet</name>
@@ -25,6 +25,28 @@
     <name>core</name>
     <url>http://maven.apache.org</url>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.html</include>
+                </includes>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>junit:junit</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>pom.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -39,6 +61,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomcat.version>8.0.26</tomcat.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -105,7 +128,7 @@
         <dependency>
             <artifactId>spring-core</artifactId>
             <groupId>org.springframework</groupId>
-            <version>4.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource</groupId>
@@ -121,22 +144,22 @@
         <dependency>
             <artifactId>spring-web</artifactId>
             <groupId>org.springframework</groupId>
-            <version>4.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-webmvc</artifactId>
             <groupId>org.springframework</groupId>
-            <version>4.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <artifactId>spring-aop</artifactId>
             <groupId>org.springframework</groupId>
-            <version>4.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
-            <version>4.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 </project>

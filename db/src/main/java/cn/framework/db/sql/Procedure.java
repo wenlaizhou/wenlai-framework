@@ -18,9 +18,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 过程对象<br>
@@ -35,7 +35,8 @@ public class Procedure {
     /**
      * sql群组容器
      */
-    private final static Map<String, Procedure> PROCEDURE_CONTAINER = new ConcurrentHashMap<>();
+    private final static Map<String, Procedure> PROCEDURE_CONTAINER = new HashMap<>();
+    //private final static Map<String, Procedure> PROCEDURE_CONTAINER = new ConcurrentHashMap<>();
     public final List<Sql> sqls = new ArrayList<>();// TODO public 转为 private
     public final String id;
     public final boolean cached;
@@ -106,7 +107,7 @@ public class Procedure {
     /**
      * 获取procedure
      *
-     * @param id
+     * @param id procedure id
      *
      * @return
      */
@@ -122,8 +123,8 @@ public class Procedure {
      * 2、参数名称校验
      * </blockquote>
      *
-     * @param sql
-     * @param params
+     * @param sql    sql
+     * @param params sql-params
      *
      * @return
      */
@@ -139,7 +140,7 @@ public class Procedure {
     /**
      * 处理resultParams
      *
-     * @param sql
+     * @param sql sql
      *
      * @return
      */
@@ -182,7 +183,7 @@ public class Procedure {
                     }
                 }
                 catch (Exception x) {
-                    LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                    Exceptions.processException(x);
                 }
             }
         }
@@ -238,65 +239,70 @@ public class Procedure {
     public Result process(KVMap params, KVMap languageParams) {
         Result result = new Result();
         DataSource dataSource = Springs.get(this.connectionId);
-        if (dataSource != null) {
-            Connection connection = null;
-            try {
-                connection = dataSource.getConnection();
-                if (this.transaction) {
-                    connection.setAutoCommit(false);
-                    for (Sql s : this.sqls) {
-                        try {
-                            executeSqlTransaction(params, result, s, connection, buildSql(languageParams, s));
-                        }
-                        catch (Exception x) {
-                            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
-                            result.setSuccess(false);
-                        }
+        if (dataSource == null) {
+            LogProvider.getFrameworkErrorLogger().error("datasource is null connection id is {}", this.connectionId);
+            return null;
+        }
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            if (this.transaction) {
+                connection.setAutoCommit(false);
+                for (Sql s : this.sqls) {
+                    try {
+                        executeSqlTransaction(params, result, s, connection, buildSql(languageParams, s));
                     }
-                    connection.commit();
-                }
-                else {
-                    for (Sql s : this.sqls) {
-                        try {
-                            executeSql(params, result, s, connection, buildSql(languageParams, s));
-                        }
-                        catch (Exception x) {
-                            LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
-                            result.setSuccess(false);
-                        }
+                    catch (Exception x) {
+                        Exceptions.processException(x);
+                        result.setSuccess(false);
                     }
                 }
-                return result.success ? result.setMessage("sql执行未出现异常") : result.setMessage("执行出现异常");
+                connection.commit();
             }
-            catch (Exception e) {
-                if (this.transaction) {
-                    if (connection != null) {
-                        try {
-                            connection.rollback();
-                        }
-                        catch (Exception x) {
-                            Exceptions.processException(x);
-                        }
+            else {
+                for (Sql s : this.sqls) {
+                    try {
+                        executeSql(params, result, s, connection, buildSql(languageParams, s));
+                    }
+                    catch (Exception x) {
+                        LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                        result.setSuccess(false);
                     }
                 }
-                LogProvider.getFrameworkErrorLogger().error(e.getMessage(), e);
-                return result.setSuccess(false).setMessage("执行错误");
             }
-            finally {
+            return result.success ? result.setMessage("sql执行未出现异常") : result.setMessage("执行出现异常");
+        }
+        catch (SQLException e) {
+            if (this.transaction) {
                 if (connection != null) {
                     try {
-                        if (!connection.getAutoCommit()) {
-                            connection.setAutoCommit(true);
-                        }
-                        connection.close();
+                        connection.rollback();
                     }
                     catch (Exception x) {
                         Exceptions.processException(x);
                     }
                 }
             }
+            Exceptions.processException(e);
+            return result.setSuccess(false).setMessage("执行错误");
         }
-        return null;
+        catch (Exception e) {
+            Exceptions.processException(e);
+            return result.setSuccess(false).setMessage("执行错误");
+        }
+        finally {
+            if (connection != null) {
+                try {
+                    if (!connection.getAutoCommit()) {
+                        connection.setAutoCommit(true);
+                    }
+                    connection.close();
+                }
+                catch (Exception x) {
+                    Exceptions.processException(x);
+                }
+            }
+        }
     }
 
     /**
@@ -379,9 +385,14 @@ public class Procedure {
         paramCheck(params, sql);
         if (Strings.isNotNullOrEmpty(sql.connectionId)) {
             DataSource dataSource = Springs.get(sql.connectionId);
-            try (Connection conn = dataSource.getConnection();) { // 更改成使用Spring获取数据连接
-                PreparedStatement executeHandler = sql.returnId ? conn.prepareStatement(Strings.isNotNullOrEmpty(sqlString) ? sqlString : sql.sql, PreparedStatement.RETURN_GENERATED_KEYS) : conn.prepareStatement(Strings.isNotNullOrEmpty(sqlString) ? sqlString : sql.sql);
-                execute(params, result, sql, executeHandler);
+            if (dataSource != null) {
+                try (Connection conn = dataSource.getConnection();) { // 更改成使用Spring获取数据连接
+                    PreparedStatement executeHandler = sql.returnId ? conn.prepareStatement(Strings.isNotNullOrEmpty(sqlString) ? sqlString : sql.sql, PreparedStatement.RETURN_GENERATED_KEYS) : conn.prepareStatement(Strings.isNotNullOrEmpty(sqlString) ? sqlString : sql.sql);
+                    execute(params, result, sql, executeHandler);
+                }
+            }
+            else {
+                Exceptions.logProcessor().logger().error("can not find datasource id is {}", sql.connectionId);
             }
         }
         else {
@@ -430,7 +441,6 @@ public class Procedure {
             result.addData(sql.id, res);
         }
         LogProvider.getFrameworkInfoLogger().info("执行sql ： {}", executeHandler);
-        System.out.println(executeHandler);
         ResourceProcessor.closeResource(executeHandler);
     }
 
@@ -443,6 +453,7 @@ public class Procedure {
      * @throws Exception
      */
     public void paramCheck(KVMap params, Sql sql) throws Exception {
+        // TODO add params check
         if (sql == null || !Strings.isNotNullOrEmpty(sql.sql)) {
             throw new Exception("配置文件出错，没有sql语句");
         }

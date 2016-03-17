@@ -71,7 +71,7 @@ public final class ThreadPool {
     /**
      * 日志句柄
      */
-    public static Logger THREAD_POOL_LOGGER = LogProvider.getLogger("pool.framework.info");
+    public final static Logger THREAD_POOL_LOGGER = LogProvider.getLogger("pool.framework.info");
     
     /**
      * 监控：<br>

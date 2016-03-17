@@ -17,14 +17,14 @@ public interface AsyncCallback {
     
     /**
      * 初始化
-     * @param initParam
+     * @param initParam 参数
      */
     void init(KVMap initParam);
     
     /**
      * 执行完毕回调
-     * @param <T>
-     * @param context
+     * @param <T> 回调类型
+     * @param context 上下文
      * @throws Exception
      */
     <T> void done(Context<T> context) throws Exception;
@@ -40,7 +40,7 @@ public interface AsyncCallback {
         /**
          * 创建上下文
          * @param success
-         * @param totalSecond
+         * @param totalSeconds
          * @param result
          */
         private Context(boolean success, int totalSeconds, T result, Object attach) {

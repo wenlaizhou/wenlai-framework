@@ -7,20 +7,23 @@
  */
 package cn.framework.rest.init;
 
-import java.util.ArrayList;
-import org.w3c.dom.Node;
 import cn.framework.core.container.Context;
 import cn.framework.core.container.InitProvider;
 import cn.framework.core.utils.Arrays;
 import cn.framework.core.utils.Reflects;
-import static cn.framework.core.utils.Xmls.*;
+import cn.framework.rest.resource.RestUI;
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
+
+import static cn.framework.core.utils.Xmls.attr;
+import static cn.framework.core.utils.Xmls.xpathNodesArray;
 
 /**
  * @author wenlai
- *
  */
 public class RestUiInitProvider implements InitProvider {
-    
+
     /*
      * @see cn.framework.core.container.InitProvider#init(cn.framework.core.container.Context)
      */
@@ -28,23 +31,24 @@ public class RestUiInitProvider implements InitProvider {
     public void init(final Context context) throws Exception {
         ArrayList<Node> restServicesNodes = xpathNodesArray("//rest-services", context.getConf());
         if (Arrays.isNotNullOrEmpty(restServicesNodes)) {
-            ArrayList<String> packages = new ArrayList<String>();
+            ArrayList<String> packages = new ArrayList<>();
             for (Node restServicesNode : restServicesNodes) {
                 ArrayList<Node> serviceNodes = xpathNodesArray(".//service", restServicesNode);
                 if (Arrays.isNotNullOrEmpty(serviceNodes)) {
                     for (Node serviceNode : serviceNodes) {
                         ArrayList<Node> packageNodes = xpathNodesArray("package", serviceNode);
-                        if (Arrays.isNotNullOrEmpty(packageNodes))
+                        if (Arrays.isNotNullOrEmpty(packageNodes)) {
                             for (Node packageNode : packageNodes)
                                 packages.add(attr("value", packageNode));
+                        }
                     }
                 }
             }
-            
-            Reflects.setField("cn.framework.rest.resource.RestUI", "PACKAGES", packages.toArray(new String[0]), null);
-            context.addServlet("rest-ui", "cn.framework.rest.resource.RestUI", "/service/ui/*");
+
+            Reflects.setField(RestUI.class.getName(), "PACKAGES", packages.toArray(new String[0]), null);
+            context.addServlet("rest-ui", RestUI.class.getName(), "/service/ui/*");
         }
-        
+
     }
-    
+
 }

@@ -5,7 +5,8 @@ import cn.framework.core.utils.Strings;
 import org.springframework.web.context.ContextLoaderListener;
 import org.w3c.dom.Node;
 
-import static cn.framework.core.utils.Xmls.*;
+import static cn.framework.core.utils.Xmls.attr;
+import static cn.framework.core.utils.Xmls.xpathNode;
 
 /**
  * project code
@@ -24,6 +25,9 @@ public class SpringInitProvider implements InitProvider {
      */
     @Override
     public void init(Context context) throws Exception {
+        /**
+         * init spring context
+         */
         Node springNode = xpathNode("//spring", context.getConf());
         if (springNode != null) {
             String springConfPath = attr("src", springNode);
