@@ -203,7 +203,7 @@ public class Context {
      * @param servletClassName servlet类名
      * @param pattern          匹配路径
      * @param initParams       初始化参数列表
-     * @param loadOnStartup    启动顺序
+     * @param loadOnStartup    启动顺序 小于0不会设置
      * @param auth             是否需要验证
      */
     public synchronized void addServlet(StandardContext c, String servletName, String servletClassName, String pattern, KVMap initParams, int loadOnStartup, boolean auth) {

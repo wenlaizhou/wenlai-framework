@@ -87,7 +87,7 @@ public class SystemUI extends HttpServlet {
                 }
                 catch (Throwable x) {
                     NO_USE_SIGAR = true;
-                    LogProvider.getFrameworkErrorLogger().error(x.getMessage(), x);
+                    Exceptions.processException(x);
                     StringBuilder html = new StringBuilder();
                     html.append(Strings.format(TEMPLATE, newPair("id", 1), newPair("name", "cpu"), newPair("value", String.format("%.2f%%", ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage()))));
                     html.append(Strings.format(TEMPLATE, newPair("id", 2), newPair("name", "heap-memory"), newPair("value", String.format("%1sMB", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024 / 1024))));

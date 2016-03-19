@@ -8,11 +8,13 @@
 package cn.framework.core.container;
 
 import cn.framework.core.log.LogProvider;
+import cn.framework.core.resource.ErrorUI;
 import cn.framework.core.utils.Exceptions;
 import cn.framework.core.utils.Reflects;
 import cn.framework.core.utils.Strings;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.Http11Nio2Protocol;
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -56,6 +58,31 @@ public class ServerInitProvider implements InitProvider {
                         connector.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
                     }
                 }
+                /**
+                 * <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
+                 <Connector
+                 protocol="org.apache.coyote.http11.Http11NioProtocol"
+                 port="8443" maxThreads="200"
+                 scheme="https" secure="true" SSLEnabled="true"
+                 keystoreFile="${user.home}/.keystore" keystorePass="changeit"
+                 clientAuth="false" sslProtocol="TLS"/>
+                 */
+                /**
+                 * build https
+                 */
+                //connector.setScheme("https");
+                //connector.setSecure(true);
+                //connector.setAttribute("SSLEnabled", "true");
+                //connector.setAttribute("keystoreFile", Projects.CONF_DIR + "/framework.keystore");
+                //connector.setAttribute("keystorePass", "wenlai");
+                //connector.setAttribute("clientAuth", "false");
+                //connector.setAttribute("sslProtocol", "TLS");
+                ////<Listener className="org.apache.catalina.core.AprLifecycleListener"
+                ////SSLEngine="on" SSLRandomSeed="builtin" />
+                //AprLifecycleListener listener = new AprLifecycleListener();
+                //                listener.setSSLEngine("on");
+                //                listener.setSSLRandomSeed("builtin");
+                //                connector.addLifecycleListener(new AprLifecycleListener());
             }
             else {
                 buildDefaultConnector(connector);
@@ -115,6 +142,18 @@ public class ServerInitProvider implements InitProvider {
             //            defaultServletParams.addKV("gzip", true);
             //            defaultServletParams.addKV("fileEncoding", "");
             //            context.addServlet("default-servlet", DefaultServlet.class.getName(), "/", defaultServletParams, 1);
+            /**
+             * add error page
+             */
+            context.addServlet("error-page", ErrorUI.class.getName(), "/Error.html");
+            ErrorPage notFound = new ErrorPage();
+            notFound.setErrorCode(404);
+            notFound.setLocation("/Error.html");
+            context.getContext().addErrorPage(notFound);
+            ErrorPage forbidden = new ErrorPage();
+            forbidden.setErrorCode(401);
+            forbidden.setLocation("/Error.html");
+            context.getContext().addErrorPage(forbidden);
         }
         catch (RuntimeException x) {
             throw x;

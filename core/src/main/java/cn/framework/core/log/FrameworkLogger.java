@@ -1,6 +1,7 @@
 package cn.framework.core.log;
 
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 /**
  * project code
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author wenlai
  */
+@Service("globalLogProcessor")
 public class FrameworkLogger implements GlobalLogProcessor {
 
     /**

@@ -7,10 +7,10 @@
  */
 package cn.framework.core.container;
 
-import cn.framework.core.log.LogProvider;
 import cn.framework.core.utils.*;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.web.context.ContextLoaderListener;
 import org.w3c.dom.Node;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,14 +31,16 @@ public class TomcatContainer {
      * 角色名称
      */
     public static final String ROLE_NAME = "admin";
+
     /**
-     * 构造容器
-     *
-     * @param confOrPath 配置文件路径或配置文件
-     * @throws Exception
+     * 框架默认用户名
      */
     private static volatile String USER_NAME = "wenlai";
-    private static volatile String PASSWORD = "wenlai";
+    
+    /**
+     * 框架默认密码
+     */
+    private static volatile String PASSWORD = "admin";
     /**
      * 配置
      */
@@ -53,7 +55,9 @@ public class TomcatContainer {
     public final StandardContext context;
 
     /**
-     * @param confOrPath
+     * 构建容器
+     *
+     * @param confOrPath config文件路径或直接传递xml文件内容
      *
      * @throws Exception
      */
@@ -95,12 +99,24 @@ public class TomcatContainer {
         this.context.setReloadable(true);
         this.context.setDelegate(true);
         this.context.setPrivileged(true);
+        /**
+         * add spring support
+         */
+        Node springNode = xpathNode("//spring", this.config);
+        if (springNode != null) {
+            String springConfPath = attr("src", springNode);
+            if (Strings.isNotNullOrEmpty(springConfPath)) {
+                this.context.addParameter("contextConfigLocation", springConfPath);
+                this.context.addApplicationListener(ContextLoaderListener.class.getName());
+            }
+        }
+        this.context.addApplicationListener(Springs.ContextRegister.class.getName());
     }
 
     /**
      * 框架基础认证
      *
-     * @param req request
+     * @param req  request
      * @param resp response
      *
      * @return
@@ -111,19 +127,26 @@ public class TomcatContainer {
         }
         try {
             String auth = req.getHeader("Authorization");
-            if (Strings.isNotNullOrEmpty(auth) && Base64s.decode(auth.split(" ")[1]).equals(String.format("%1$s:%2$s", getUsername(), getPassword()))) {
-                return true;
+            if (Strings.isNotNullOrEmpty(auth)) {
+                String[] token = auth.split(" ");
+                if (token != null && token.length > 1) {
+                    if (Strings.isNotNullOrEmpty(token[1])) {
+                        if (Base64s.decode(token[1]).equals(String.format("%1$s:%2$s", getUsername(), getPassword()))) {
+                            return true;
+                        }
+                    }
+                }
+                //Strings.isNotNullOrEmpty(auth) && Base64s.decode(auth.split(" ")[1]).equals(String.format("%1$s:%2$s", getUsername(), getPassword()))) {
             }
         }
         catch (Exception x) {
             processException(x);
         }
-        // resp.setStatus(401);
         try {
             resp.setHeader("Cache-Control", "no-store");
             resp.setDateHeader("Expires", 0);
             resp.setHeader("WWW-authenticate", "Basic Realm=\"wenlai.framework\"");
-            resp.sendError(401);
+            resp.sendError(401, "FORBIDDEN");
         }
         catch (Exception e) {
             processException(e);
@@ -176,7 +199,7 @@ public class TomcatContainer {
                                 provider.init(param);
                             }
                             else {
-                                LogProvider.getFrameworkErrorLogger().error("provider not found : {}", attr("class", providerNode));
+                                Exceptions.logProcessor().logger().error("provider not found : {}", attr("class", providerNode));
                             }
                         }
                         catch (Exception x) {

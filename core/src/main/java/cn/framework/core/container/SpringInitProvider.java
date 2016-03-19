@@ -34,8 +34,9 @@ public class SpringInitProvider implements InitProvider {
             if (Strings.isNotNullOrEmpty(springConfPath)) {
                 context.getContext().addParameter("contextConfigLocation", springConfPath);
                 context.getContext().addApplicationListener(ContextLoaderListener.class.getName());
-                context.getContext().addApplicationListener(Springs.ContextRegister.class.getName());
             }
         }
+        context.getContext().addApplicationListener(Springs.ContextRegister.class.getName());
     }
+
 }

@@ -8,7 +8,7 @@ package cn.framework.core.utils;
  * @author wenlai
  */
 
-import cn.framework.core.log.LogProvider;
+import cn.framework.core.container.FrameworkSpringRegister;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -16,9 +16,20 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * bean工具类
+ * bean工具类<br>
+ * 统一设置成WebApplicationContext
  */
 public final class Springs {
+
+    /**
+     * scope - singleton
+     */
+    public final static String SCOPE_SINGLETON = "singleton";
+
+    /**
+     * scope - prototype
+     */
+    public final static String SCOPE_PROTOTYPE = "prototype";
 
     /**
      * context实例
@@ -46,12 +57,12 @@ public final class Springs {
                     return (T) bean;
                 }
                 else {
-                    LogProvider.getFrameworkInfoLogger().info("bean {} is not found", beanId);
+                    Exceptions.logProcessor().logger().info("bean {} is not found", beanId);
                     return null;
                 }
             }
             else {
-                LogProvider.getFrameworkErrorLogger().error("Springs context is not initialized successed !");
+                Exceptions.logProcessor().logger().error("Springs context is not initialized successed !");
             }
         }
         catch (Exception x) {
@@ -62,12 +73,53 @@ public final class Springs {
 
 
     /**
+     * 获取bean实例
+     *
+     * @param beanId     名称
+     * @param returnType 返回类型
+     * @param <T>        类型
+     *
+     * @return
+     */
+    public static <T> T get(String beanId, Class<T> returnType) {
+        try {
+            if (Springs.context != null) {
+                T bean = Springs.context.getBean(beanId, returnType);
+                if (bean != null) {
+                    return bean;
+                }
+                else {
+                    Exceptions.logProcessor().logger().info("bean {} is not found", beanId);
+                    return null;
+                }
+            }
+            else {
+                Exceptions.logProcessor().logger().error("Springs context is not initialized successed !");
+            }
+        }
+        catch (Exception x) {
+            Exceptions.processException(x);
+        }
+        return null;
+    }
+
+    /**
      * 获取Spring上下文
      *
      * @return
      */
     public static final ApplicationContext getContext() {
         return Springs.context;
+    }
+
+    /**
+     * 设置全局上下文环境
+     *
+     * @param context 上下文
+     */
+    public static synchronized void setContext(ApplicationContext context) {
+        Springs.context = context;
+        System.out.println("spring context reset done!");
     }
 
     /**
@@ -80,7 +132,7 @@ public final class Springs {
             try {
                 if (Springs.context == null && !INITED) {
                     Object context = servletContextEvent.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-                    if (context != null) {
+                    if (context != null && context instanceof ApplicationContext) {
                         Springs.context = (ApplicationContext) context;
                     }
                 }
@@ -89,6 +141,7 @@ public final class Springs {
                 Exceptions.processException(x);
             }
             finally {
+                FrameworkSpringRegister.context.getId();
                 INITED = true;
             }
         }

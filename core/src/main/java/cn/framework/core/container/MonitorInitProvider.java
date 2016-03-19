@@ -5,7 +5,6 @@ import cn.framework.core.pool.ThreadPoolUI;
 import cn.framework.core.pool.ThreadUI;
 import cn.framework.core.pool.TomcatUI;
 import cn.framework.core.utils.KVMap;
-import org.apache.catalina.manager.HTMLManagerServlet;
 import org.apache.catalina.manager.StatusManagerServlet;
 
 /**
@@ -39,6 +38,7 @@ public class MonitorInitProvider implements InitProvider {
          */
         context.addServlet(null, "manager-status", StatusManagerServlet.class.getName(), "/text/*", KVMap.newKvMap("debug", 0), -1, true);
         context.addServlet(null, "manager-cmd", StatusManagerServlet.class.getName(), "/status/*", KVMap.newKvMap("debug", 0), -1, true);
-        context.addServlet(null, "manager-html", HTMLManagerServlet.class.getName(), "/html/*", KVMap.newKvMap("debug", 0), -1, true);
+        context.addFilter("manager-status-auth", AuthFilter.class.getName(), "/text/*");
+        context.addFilter("manager-cmd-auth", AuthFilter.class.getName(), "/status/*");
     }
 }
